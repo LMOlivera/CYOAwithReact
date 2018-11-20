@@ -1,0 +1,26 @@
+header{
+  background-color: red;
+}
+
+main{
+  display: flex;
+}
+nav{
+  min-width:60px;
+  width: 10%;
+  background-color: yellow;
+}
+#inventory{
+  padding-inline-start: 0px;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+}
+section{
+  width: 90%;
+  background-color: cyan;
+  padding-left: 2vw;
+}
+
+footer{
+  background-color: red;
+}

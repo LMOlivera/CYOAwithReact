@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!---------------------- -->
+	<!--  React.js and Babel -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
+	<!---------------------- -->
+	<link rel="stylesheet" href="style.css"></link>
+    <title>React</title>
+  </head>
+  <body>
+    <header>
+      CYOA Test
+    </header>
+    <div id="container"><section>If you can read this, it means React is failing.</section></div>
+    <footer>
+      Lucas Olivera 2018
+    </footer>
+	<script type="text/babel">
+		class Inventory extends React.Component{
+			constructor(props){
+				super(props)
+				this.state={
+					inventory: props.inventory.map(function(item){
+						return <center><button>{item}</button></center>;
+						})
+				}
+			}
+			render(){
+			const inv = <center><ul id="inventory">{this.state.inventory}</ul></center>;
+			const invEmpty = <center><p>You have no items</p></center>;
+			return(
+				this.state.inventory==[] ? inv : invEmpty
+				)
+			}
+		}
+
+
+		class Story extends React.Component{
+		  constructor(props){
+			super(props);
+			this.state={
+			  inventory: [],
+			  choices: [],
+			  part: 0      
+			}
+			this.goodChoice = this.goodChoice.bind(this);
+			this.badChoice = this.badChoice.bind(this);
+		  }
+		  
+		  goodChoice(){
+			let cho = this.state.choices;
+			cho.push('1')
+			this.setState({choices: cho, part: this.state.part+1});
+		  }
+		  badChoice(){
+			let cho = this.state.choices;
+			cho.push('0')
+			this.setState({choices: cho, part: this.state.part+1});
+		  }
+		  
+		  render(){
+			const part0 = <div>
+							<p>This is a test. It was programmed just to see if everything is going to be okay. What do you think?</p>
+							<button onClick={() => this.goodChoice()}>Everything will go as planned</button>   <button onClick={() => this.badChoice()}>I think you can't do anything right</button>
+						  </div>;
+			const part1Good = <p>Thanks, I appreciate that.</p>; const part1Bad = <p>That was very rude, you know.</p>;
+			
+			const part1 = <div>
+							<p>Anyways, if this works that means it should be a good idea to start writting some plot to make a good, interactive story.</p>
+							
+						  </div>;
+			
+			
+			return(
+			  <main>
+				<nav>
+				  <Inventory inventory={this.state.inventory}/>
+				</nav> 
+				<section>
+				  <p>
+					{part0}
+					{this.state.part>=1 && (this.state.choices[0]==1 ? part1Good : part1Bad)}
+					{this.state.part>=1 && part1}
+				  </p>
+				</section>
+			  </main>
+			)
+		  }
+		}
+
+		ReactDOM.render(<Story />, document.getElementById('container'));
+	</script>
+	
+  </body>
+</html>

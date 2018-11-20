@@ -10,17 +10,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
     <!---------------------- -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css"></link>
     <title>Choose Your Own Adventure! featuring React.js</title>
   </head>
   <body>
-    <header>
+    <header class="text-center bg-warning lead">
       CYOA Test
     </header>
-    <div id="container"><section>If you can read this, it means React is failing.</section></div>
-    <footer>
+    <div class="container-fluid" id="container">If you can read this, it means React is failing.</div>    
+    <footer class="text-center bg-warning">
       Lucas Olivera 2018
     </footer>
+	  
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	  
+	  
 	  <script type="text/babel">
 	  	//Only displays inventory, nothing else.
 class Inventory extends React.Component{
@@ -28,20 +35,55 @@ class Inventory extends React.Component{
     super(props)
     this.state={
       inventory: props.inventory.map(function(item){
-                        return <center><button>{item}</button></center>;
+                        return <div><center><button className="inventory-btn" data-toggle="modal" data-target="#exampleModal">{item.name}</button><br/><br/></center>
+                          <div className="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div className="modal-dialog" role="document">
+                              <div className="modal-content">
+                                <div className="modal-header">
+                                  <h5 className="modal-title" id="exampleModalLabel">{item.name}</h5>
+                                </div>
+                                <div className="modal-body">
+                                  {item.description}
+                                </div>
+                                <div className="modal-footer">
+                                  <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          </div>;
                       })
     }
   }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   render(){
     const inv = <center><ul id="inventory">{this.state.inventory}</ul></center>;
     const invEmpty = <center><p>You have no items</p></center>;
     return(
-      this.state.inventory==[] ? inv : invEmpty
+      <div className="py-2 sticky-top">
+        <div class="nav flex-column">
+          <center><b>Inventory</b></center>
+          <br/>
+          {this.state.inventory.length>0 ? inv : invEmpty}
+        </div>
+      </div>
     )
   }
 }
-
 
 class ChapterOne extends React.Component{
   constructor(props){
@@ -49,29 +91,27 @@ class ChapterOne extends React.Component{
   }
   
   render(){
-    const part0 = <div>
-                    <p>This is a test. It was programmed just to see if everything is going to be okay. What do you think?</p>
-                  </div>;
-    const question0 = <div><button onClick={() => this.props.addChoice('1')}>Everything will go as planned</button>   <button onClick={() => this.props.addChoice('0')}>I think you can't do anything right</button></div>;
-    const part1Good = <p>Thanks, I appreciate that.</p>;
-    const part1Bad = <p>That was very rude, you know.</p>;
+    const part0 = <p>It is a new Saturday morning. As you realise your day off, the idea of not getting up yet appears in your mind. It is actually a good idea, but you aren't sure because you want to spend the day having fun instead of sleeping. But the confiness and warmth of your bed makes you doubt.</p>;
+    const question0 = <p className="container"><button className="btn btn-block" onClick={() => this.props.addChoice('0')}>I think a few more minutes won't harm me</button><button className="btn btn-block" onClick={() => this.props.addChoice('1')}>No way I'm spending the day on my bed</button></p>;
+    const part1Bad = <p>You cover yourself with the mattress. It doesn't get you too long to fall asleep, you were very comfortable.</p>;
+    const part1Good = <p>You remember you had to do something important. Good thing you didn't fall asleep.</p>;
     
-    const part1 = <div>
+    const part1 = <p>
                     Anyways, if this works that means it should be a good idea to start writting some plot to make a good, interactive story.                    
-                  </div>;
+                  </p>;
     
     return(
       <p>
         {part0}
         {this.props.progress==0 && question0}
-        {this.props.progress>=1 && (this.props.choices[0]>=1 ? <b>Everything will go as planned</b> : <p>I think you can't do <b>anything</b> right</p>)}
+        {this.props.progress>=1 && (this.props.choices[0]>=1 ? <p><i>No way I'm spending a saturday on my bed.</i> - you say.</p> : <p><i>I think a few more minutes won't harm me.</i> - you think.</p>)}
+        
         {this.props.progress>=1 && (this.props.choices[0]==1 ? part1Good : part1Bad)}
         {this.props.progress>=1 && part1}
-      </p>      
+      </p>
     )
   }
 }
-
 class ChapterTwo extends React.Component{
   constructor(props){
     super(props);
@@ -103,7 +143,9 @@ class Story extends React.Component{
   constructor(props){
     super(props);
     this.state={
-      inventory: [],
+      inventory: [
+        {name: "Will to live", description:"Without this, you would be dead."}
+      ],
       /* INDEX OF CHOICES:
       0: First
       
@@ -122,34 +164,34 @@ class Story extends React.Component{
   }
   
   render(){
-    if(this.state.progress>=0 & this.state.progress<=0){
+    if(this.state.progress>=0 & this.state.progress<=1){
        return(
-         <main>
-           <nav>
+         <div className="row">
+           <nav className="col-3 px-1 bg-info" id="sticky-sidebar">
              <Inventory inventory={this.state.inventory}/>
            </nav>
-           <section>
+           <main className="col-9 col-sm-9 col-md-9 col-xl-9">
              <ChapterOne addChoice={this.addChoice.bind(this)} progress={this.state.progress} choices={this.state.choices}/>
-           </section>
-         </main>
+           </main>
+         </div>
        );
     }
-    else if(this.state.progress>=1 & this.state.progress<=2){
+    else if(this.state.progress>=2 & this.state.progress<=2){
       return(
-      <main>
-        <nav>
+      <div className="row">
+        <nav className="col-3 px-1 bg-info" id="sticky-sidebar">
           <Inventory inventory={this.state.inventory}/>
         </nav> 
-        <section>
+        <main className="col-9 col-sm-9 col-md-9 col-xl-9">
           <ChapterTwo addChoice={this.addChoice.bind(this)} progress={this.state.progress} choices={this.state.choices}/>
-        </section>
-      </main>
+        </main>
+      </div>
     )
     }
   }
 }
 
-ReactDOM.render(<Story />, document.getElementById('container'));	  
+ReactDOM.render(<Story />, document.getElementById('container'));
 	  </script>	
   </body>
 </html>

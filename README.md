@@ -7,7 +7,7 @@ This mini-project was started in codepen.io and I decided to give Github a go, s
 2. https://codepen.io/LeWanderer/pen/PyxpLB
 3. https://codepen.io/LeWanderer/pen/zmMpdY
 4. https://codepen.io/LeWanderer/pen/zmydXx
-4. (4.5) https://codepen.io/LeWanderer/pen/NOZoXp
+4. (4.5 - Latest version on Codepen) https://codepen.io/LeWanderer/pen/NOZoXp
 
 **Note**: As I'm working on a computer without Node, I couldn't properly set up Babel so I had to merge my "app.js" and "index.html".
 

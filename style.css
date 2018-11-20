@@ -31,9 +31,8 @@ header{
   font-size: 32px;
 }
 
-main{
-  /*border: 1px solid black;
-  border-radius: 10px;*/
+body{
+  padding: 0;  
 }
 
 p{

@@ -26,21 +26,21 @@
 	  
 	  
 	  <script type="text/babel">
-	  	//Displays status and inventory, renders in parent.
+	  	//Displays status, inventory and Save/Load. Renders in Story.
 class HUD extends React.Component{
   constructor(props){
     super(props)
     this.state={
       inventory: props.inventory.map(function(item){
-                        return <div><center><button className="inventory-btn" data-toggle="modal" data-target="#Modal">{item.name}</button><br/><br/></center>
+                        return <div><center><button className="inventory-btn" data-toggle="modal" data-target="#Modal">{item[0]}</button><br/><br/></center>
                           <div className="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
                             <div className="modal-dialog" role="document">
                               <div className="modal-content">
                                 <div className="modal-header">
-                                  <h5 className="modal-title" id="ModalLabel">{item.name}</h5>
+                                  <h5 className="modal-title" id="ModalLabel">{item[0]}</h5>
                                 </div>
                                 <div className="modal-body">
-                                  {item.description}
+                                  {item[1]}
                                 </div>
                                 <div className="modal-footer">
                                   <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -66,7 +66,7 @@ class HUD extends React.Component{
             <br/><br/>
             <center><b>Inventory</b></center>
             {this.state.inventory.length>0 ? inv : invEmpty}
-            <button className="p-2 btn btn-block">Save</button><button className="p-2 btn btn-block">Load</button>
+            <button className="p-2 btn btn-block" onClick={() => this.props.saveGame()}>Save</button>
           </center>
         </div>
       </div>
@@ -74,7 +74,7 @@ class HUD extends React.Component{
   }
 }
 
-//Chapters, renders in Story
+//Chapters: render in Story
 class ChapterOne extends React.Component{
   constructor(props){
     super(props);
@@ -105,99 +105,114 @@ class ChapterOne extends React.Component{
 }
 
 
-//Contains the story chapters, renders in parent.
-//Inventory is a prop.
-//addToInventory and removeFromInventory are inherited, don't work yet
+//Parent: Layout and Inventory Data
+//Contains the story chapters
 class Story extends React.Component{
   constructor(props){
     super(props);
     this.state={
       /* INDEX OF CHOICES:
-      0: First
+      0: Start
       */
       choices: [],
+      //Progress in general history
       chapter: 0,
+      //To advance to the next paragraph.
       progress: 0,
-      path: 0
-    }
-    this.addChoice = this.addChoice.bind(this);
-  }
-  
-  
-  addChoice(choiceMade){
-    let cho = this.state.choices;
-    cho.push(choiceMade)
-    this.setState({choices: cho, progress: this.state.progress+1});
-  }
-  
-  render(){
-    if(this.state.progress>=0 & this.state.progress<=1){
-       return(<ChapterOne addChoice={this.addChoice.bind(this)} progress={this.state.progress} choices={this.state.choices} path={this.state.path}/>);
-    }
-    else if(this.state.progress>=2 & this.state.progress<=2){
-      return(<ChapterTwo addChoice={this.addChoice.bind(this)} progress={this.state.progress} choices={this.state.choices} path={this.state.path}/>);
-    }
-  }
-}
-
-
-//Parent: Layout and Inventory Data
-class App extends React.Component{
-  constructor(props){
-    super(props);
-    this.state={
+      /*Determines the paragraphs that will appear next depending on your choices
+      0: Start
+      */
+      path: 0,
+      //For more complex branching
+      subpath: 0,
       inventory: [
-        {name: "Will to live", description:"Without this, you would be dead."},
-        {name: "Will to live", description:"Without this, you would be dead."},
-        {name: "Will to live", description:"Without this, you would be dead."},
-        {name: "Will to live", description:"Without this, you would be dead."}
+        //Name, Description
+        ["Will to live", "Without this, you would be dead."]
       ],
       game: false
-    }
-    this.startGame = this.startGame.bind(this);
+    };
+	  this.startGame = this.startGame.bind(this);
+    this.addChoice = this.addChoice.bind(this);
+    this.renderIntro_Header = this.renderIntro_Header.bind(this);
+    this.renderStory = this.renderStory.bind(this);
   }
-  
-  addToInventory(){
-    
-  }
-  removeFromInventory(){
-    
-  }
-  
   startGame(){
     this.setState({
       game: true
     })
   }
-    
+  addChoice(choiceMade){
+    let cho = this.state.choices;
+    cho.push(choiceMade)
+    this.setState({choices: cho, progress: this.state.progress+1});
+  }
+  saveGame(){
+    try{
+      localStorage.chapter = this.state.chapter;
+      localStorage.progress = this.state.progress;
+      localStorage.path = this.state.path;
+      localStorage.setItem('choices', JSON.stringify(this.state.choices));
+      localStorage.setItem('inventory', JSON.stringify(this.state.inventory));
+      alert('Game saved');
+    }catch(e){
+      alert('Something went wrong!' + e.error);
+    }
+  }
+  loadGame(){
+    let cho = JSON.parse(localStorage.getItem('choices'));
+    let inv = JSON.parse(localStorage.getItem('inventory'));
+    this.setState({
+      game: true,
+      chapter: localStorage.chapter,
+      progress: localStorage.progress,
+      path: localStorage.path,
+      choices: cho,
+      inventory: inv
+    })
+  }
+  
+  //Conditionals for rendering
+  renderIntro_Header(){
+    if(this.state.game==false){
+      return(
+            <header className="text-center bg-warning jumbotron">
+              CYOA Test
+            </header>
+     )
+    }
+  }
+  renderStory(){
+    if(this.state.progress>=0 & this.state.progress<=1){
+      return(<ChapterOne addChoice={this.addChoice.bind(this)} progress={this.state.progress} choices={this.state.choices} path={this.state.path} subpath={this.state.subpath}/>);
+    }
+    else if(this.state.progress>=2 & this.state.progress<=2){
+      return(<ChapterTwo addChoice={this.addChoice.bind(this)} progress={this.state.progress} choices={this.state.choices} path={this.state.path} subpath={this.state.subpath}/>);
+    }
+  }
+  ///////////////////////////
   render(){
     return(
       <div>
-      {
-          this.state.game==false &&
-          <header className="text-center bg-warning jumbotron">
-            CYOA Test
-          </header>
-      }
+	    {this.renderIntro_Header()}
       <div className="container-fluid">
         <div className="row">
           {
             this.state.game==true &&
             <nav className="col-3 px-1 bg-info rounded-right" id="sticky-sidebar">
-              <HUD inventory={this.state.inventory}/>
+              <HUD inventory={this.state.inventory} saveGame={this.saveGame.bind(this)} loadGame={this.loadGame.bind(this)}/>
             </nav>
           }
           <div className="col-1 col-sm-1 col-md-1 col-xl-1"></div>
           <main className={this.state.game==true ? "col-7 col-sm-7 col-md-7 col-xl-7 py-5" : "col-12 col-sm-12 col-md-12 col-xl-12"}>
             {
               this.state.game==true ?
-                <Story inventory={this.state.inventory} addToInventory={this.addToInventory.bind(this)} removeFromInventory={this.removeFromInventory.bind(this)}/>
+                this.renderStory()
                 :
                 <p>Welcome to my "Choose Your Own Adventure" page!<br/><br/>
               It was made with React.js and it uses WebStorage to save your progress (that means your progress will be lost if you delete your browser's history).
                    <br/><br/>
                    <center>
-                    <button className="btn" onClick={() => this.startGame()}>Start game</button> <button className="btn">Load Game</button>
+                    <button className="btn" onClick={() => this.startGame()}>Start game</button> <button className="btn" onClick={() => this.loadGame()}>Load Game</button>
                    </center>
                 </p>
             }
@@ -205,12 +220,14 @@ class App extends React.Component{
           <div className="col-1 col-sm-1 col-md-1 col-xl-1"></div>
         </div>
       </div>
-     </div>
+	  </div>    
     )
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('container'));
+
+
+ReactDOM.render(<Story />, document.getElementById('container'));
 	  </script>	
   </body>
 </html>

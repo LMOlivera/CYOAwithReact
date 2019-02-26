@@ -12,4 +12,4 @@ This mini-project was started in codepen.io and I decided to give Github a go, s
 **Note**: As I'm working on a computer without Node, I couldn't properly set up Babel so I had to merge my "app.js" and "index.html".
 
 ### Check it out at
-https://lewanderer.github.io/CYOAwithReact/
+https://lmolivera.github.io/CYOAwithReact/
